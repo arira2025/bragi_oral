@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversación Oral — Bragi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-[#125423] via-[#2d5a33] to-[#c9a84c] flex justify-center font-sans overflow-y-auto">
+<div class="w-full max-w-3xl bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl p-8 my-8">
+
+  <div id="mensajeGlobal" class="hidden mt-2 mb-4 p-3 rounded-lg bg-[#f4f2e0] border-l-4 border-[#4a7c3f] text-[#125423] font-medium"></div>
+
+  <!-- PANTALLA 1: Identificación -->
+  <div id="pantallaIdentificacion">
+    <h2 class="text-2xl font-semibold text-[#125423] mb-2">🎙️ Conversación oral — Bragi</h2>
+    <p class="text-gray-600 mb-6">Ingresá tu email para continuar con tu historial de práctica.</p>
+    <label class="font-medium text-[#125423]">Tu email (el mismo que usás en la app)</label>
+    <input id="emailUsuario" type="email" placeholder="tunombre@gmail.com"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 mb-4 focus:outline-none focus:ring-2 focus:ring-[#4a7c3f] transition">
+    <label class="font-medium text-[#125423]">Nivel</label>
+    <select id="nivelOral"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 mb-4 focus:outline-none focus:ring-2 focus:ring-[#4a7c3f] transition">
+      <option value="A2">A2 — Básico</option>
+      <option value="B1">B1 — Intermedio</option>
+      <option value="B2">B2 — Intermedio alto</option>
+    </select>
+    <label class="font-medium text-[#125423]">Idioma de las explicaciones</label>
+    <select id="idiomaOral"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 mb-6 focus:outline-none focus:ring-2 focus:ring-[#4a7c3f] transition">
+      <option value="Español">Español</option>
+      <option value="Alemán">Alemán</option>
+      <option value="Inglés">Inglés</option>
+    </select>
+    <button onclick="confirmarIdentidad()"
+      class="w-full bg-[#125423] hover:bg-[#0a3d1a] text-white font-medium px-5 py-3 rounded-lg transition shadow-md">
+      Continuar
+    </button>
+  </div>
+
+  <!-- PANTALLA 2: Elegir contexto -->
+  <div id="pantallaContexto" style="display:none;">
+    <h2 class="text-2xl font-semibold text-[#125423] mb-4">¿Qué contexto querés practicar?</h2>
+    <p class="text-gray-500 mb-4">Sugerencias basadas en tu historial:</p>
+    <div id="contextosSugeridos" class="flex flex-wrap gap-2 mb-4"></div>
+    <p class="text-gray-500 mb-2">O elegí de la lista completa:</p>
+    <div class="grid grid-cols-2 gap-2 mb-6">
+      <button onclick="elegirContexto('Restaurante')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">🍽️ Restaurante</button>
+      <button onclick="elegirContexto('Calle (direcciones)')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">🗺️ Calle (direcciones)</button>
+      <button onclick="elegirContexto('Supermercado')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">🛒 Supermercado</button>
+      <button onclick="elegirContexto('Negocio en general')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">🏪 Negocio</button>
+      <button onclick="elegirContexto('Centro de salud')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">🏥 Centro de salud</button>
+      <button onclick="elegirContexto('Llamada servicio técnico')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">📞 Servicio técnico</button>
+      <button onclick="elegirContexto('Cita médica')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">👨‍⚕️ Cita médica</button>
+      <button onclick="elegirContexto('Reclamo')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">📋 Reclamo</button>
+      <button onclick="elegirContexto('Pedir ayuda por accidente')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition col-span-2">🚨 Pedir ayuda por accidente</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 3: Diálogo -->
+  <div id="pantallaDialogo" style="display:none;">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-[#125423]">Conversación oral</h2>
+      <span class="text-sm text-gray-500">Turno <span id="turnoActual">1</span> de 5</span>
+    </div>
+    <p class="text-xs text-gray-400 mb-4">Contexto: <span id="contextoActual"></span></p>
+
+    <!-- Burbuja IA -->
+    <div class="bg-[#f0f4e8] rounded-xl p-4 mb-4">
+      <p class="text-xs text-gray-500 mb-1">IA:</p>
+      <p id="textoIA" class="text-[#125423] font-medium"></p>
+    </div>
+
+    <!-- Timer -->
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-sm text-gray-500">Tiempo:</span>
+      <span id="timerDisplay" class="font-bold text-[#125423]">30s</span>
+      <div class="flex-1 bg-gray-200 rounded-full h-2">
+        <div id="timerBar" class="bg-[#4a7c3f] h-2 rounded-full transition-all" style="width:100%"></div>
+      </div>
+    </div>
+
+    <!-- Transcripción -->
+    <div class="bg-[#faf8ed] rounded-xl p-4 mb-4 min-h-16">
+      <p class="text-xs text-gray-500 mb-1">Tu respuesta:</p>
+      <p id="transcripcionUsuario" class="text-gray-700 italic">Presioná el botón para hablar...</p>
+    </div>
+
+    <!-- Botones grabación -->
+    <div class="flex gap-3 mb-4">
+      <button id="btnGrabar" onclick="iniciarGrabacion()"
+        class="flex-1 bg-[#2d5a33] hover:bg-[#1a3a1f] text-white px-4 py-3 rounded-lg transition shadow font-medium">
+        🎙️ Hablar
+      </button>
+      <button id="btnDetener" onclick="detenerGrabacion()" style="display:none;"
+        class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition shadow font-medium">
+        🔴 Grabando... tocá para detener
+      </button>
+    </div>
+
+    <!-- Feedback del turno -->
+    <div id="feedbackTurno" class="hidden p-4 border-l-4 border-[#4a7c3f] bg-[#f4f2e0] rounded-lg">
+      <p id="textoFeedbackTurno" class="text-[#125423] mb-3"></p>
+      <button onclick="siguienteTurno()"
+        class="w-full bg-[#125423] hover:bg-[#0a3d1a] text-white px-4 py-2 rounded-lg transition shadow">
+        Continuar
+      </button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 4: Feedback final -->
+  <div id="pantallaFeedbackFinal" style="display:none;">
+    <h2 class="text-2xl font-semibold text-[#125423] mb-4">Resumen de la sesión</h2>
+    <div id="contenidoFeedbackFinal" class="p-5 bg-[#f4f2e0] rounded-xl text-[#125423] mb-6"></div>
+    <a href="https://script.google.com/macros/s/AKfycbys674YLodLtXp0qGqUGWxQwl5f9psCdR1FZplE5L2tDD7IiqO787PvfCZ7ZL0RIQuO/exec"
+      class="block w-full text-center bg-[#125423] hover:bg-[#0a3d1a] text-white px-5 py-3 rounded-lg transition shadow font-medium">
+      Volver a ejercicios escritos
+    </a>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys674YLodLtXp0qGqUGWxQwl5f9psCdR1FZplE5L2tDD7IiqO787PvfCZ7ZL0RIQuO/exec";
+const OPENAI_API_KEY = "TU_API_KEY_AQUI"; // reemplazá con tu clave OpenAI
+
+// ============================================================
+// VARIABLES GLOBALES
+// ============================================================
+let emailUsuario = "";
+let nivelOral = "A2";
+let idiomaOral = "Español";
+let contextoActual = "";
+let turnoActual = 1;
+let textoIAActual = "";
+let sesionId = "";
+let historialTurnos = [];
+let timerInterval = null;
+let tiempoLimite = 30;
+let mediaRecorder = null;
+let audioChunks = [];
+
+// ============================================================
+// PANTALLA 1: Identificación
+// ============================================================
+function confirmarIdentidad() {
+  const email = document.getElementById("emailUsuario").value.trim();
+  if (!email || !email.includes("@")) {
+    mostrarMensaje("Ingresá un email válido.");
+    return;
+  }
+  emailUsuario = email;
+  nivelOral = document.getElementById("nivelOral").value;
+  idiomaOral = document.getElementById("idiomaOral").value;
+  sesionId = "ses_oral_" + new Date().getTime();
+
+  cargarContextosSugeridos();
+  mostrar("pantallaContexto");
+  ocultar("pantallaIdentificacion");
+}
+
+// ============================================================
+// PANTALLA 2: Contextos
+// ============================================================
+async function cargarContextosSugeridos() {
+  try {
+    const response = await fetch(APPS_SCRIPT_URL + "?action=obtenerContextos&email=" + encodeURIComponent(emailUsuario));
+    const data = await response.json();
+    const contenedor = document.getElementById("contextosSugeridos");
+    contenedor.innerHTML = "";
+    if (data.sugeridos && data.sugeridos.length > 0) {
+      data.sugeridos.forEach(function(c) {
+        const btn = document.createElement("button");
+        btn.innerText = "⭐ " + c;
+        btn.className = "bg-[#c9a84c] text-white px-3 py-1 rounded-full text-sm hover:bg-[#a8873a] transition";
+        btn.onclick = function() { elegirContexto(c); };
+        contenedor.appendChild(btn);
+      });
+    } else {
+      contenedor.innerHTML = "<p class='text-xs text-gray-400'>Sin sugerencias aún — elegí cualquier contexto.</p>";
+    }
+  } catch(e) {
+    document.getElementById("contextosSugeridos").innerHTML = "<p class='text-xs text-gray-400'>Sin sugerencias aún.</p>";
+  }
+}
+
+async function elegirContexto(contexto) {
+  contextoActual = contexto;
+  turnoActual = 1;
+  historialTurnos = [];
+
+  mostrarMensaje("Preparando el diálogo...");
+
+  try {
+    const response = await fetch(APPS_SCRIPT_URL + "?action=iniciarDialogo&email=" + encodeURIComponent(emailUsuario) + "&contexto=" + encodeURIComponent(contexto) + "&nivel=" + nivelOral + "&idioma=" + encodeURIComponent(idiomaOral));
+    const data = await response.json();
+    textoIAActual = data.texto_ia;
+
+    document.getElementById("contextoActual").innerText = contexto;
+    document.getElementById("textoIA").innerText = textoIAActual;
+    document.getElementById("turnoActual").innerText = turnoActual;
+
+    ocultar("pantallaContexto");
+    mostrar("pantallaDialogo");
+    document.getElementById("feedbackTurno").classList.add("hidden");
+
+    const tiempos = { A2: 30, B1: 20, B2: 15 };
+    tiempoLimite = tiempos[nivelOral] || 30;
+    iniciarTimer();
+
+  } catch(e) {
+    mostrarMensaje("Error al iniciar el diálogo. Intentá de nuevo.");
+  }
+}
+
+// ============================================================
+// GRABACIÓN CON MediaRecorder
+// ============================================================
+function iniciarGrabacion() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    mostrarMensaje("Tu navegador no soporta grabación.");
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(function(stream) {
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      mediaRecorder.ondataavailable = function(e) {
+        if (e.data && e.data.size > 0) audioChunks.push(e.data);
+      };
+      mediaRecorder.onstop = function() {
+        stream.getTracks().forEach(t => t.stop());
+        if (!audioChunks || audioChunks.length === 0) {
+          mostrarMensaje("No se capturó audio. Intentá de nuevo.");
+          restaurarBtnGrabar();
+          return;
+        }
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        document.getElementById("btnGrabar").innerText = "⏳ Transcribiendo...";
+        document.getElementById("btnGrabar").disabled = true;
+        procesarAudio(audioBlob);
+      };
+      mediaRecorder.start();
+      document.getElementById("btnGrabar").style.display = "none";
+      document.getElementById("btnDetener").style.display = "block";
+    })
+    .catch(function(err) {
+      mostrarMensaje("No se pudo acceder al micrófono: " + err.message);
+    });
+}
+
+function detenerGrabacion() {
+  clearInterval(timerInterval);
+  if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+  document.getElementById("btnGrabar").style.display = "block";
+  document.getElementById("btnDetener").style.display = "none";
+}
+
+// ============================================================
+// TRANSCRIPCIÓN CON WHISPER (directo desde el navegador)
+// ============================================================
+async function procesarAudio(audioBlob) {
+  try {
+    const formData = new FormData();
+    formData.append("file", audioBlob, "audio.webm");
+    formData.append("model", "whisper-1");
+    formData.append("language", "de");
+
+    const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + OPENAI_API_KEY
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      mostrarMensaje("Error en transcripción: " + err);
+      restaurarBtnGrabar();
+      return;
+    }
+
+    const data = await response.json();
+    const transcripcion = data.text ? data.text.trim() : "";
+    document.getElementById("transcripcionUsuario").innerText = transcripcion || "(sin respuesta)";
+    restaurarBtnGrabar();
+    mostrarMensaje("Evaluando respuesta...");
+    await evaluarTurno(transcripcion);
+
+  } catch(e) {
+    mostrarMensaje("Error al transcribir: " + e.message);
+    restaurarBtnGrabar();
+  }
+}
+
+// ============================================================
+// EVALUACIÓN DEL TURNO
+// ============================================================
+async function evaluarTurno(transcripcion) {
+  try {
+    const payload = {
+      action: "evaluarTurno",
+      email: emailUsuario,
+      sesion_id: sesionId,
+      contexto: contextoActual,
+      nivel: nivelOral,
+      idioma: idiomaOral,
+      turno_numero: turnoActual,
+      texto_ia_anterior: textoIAActual,
+      transcripcion_usuario: transcripcion
+    };
+
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    const evaluacion = data.evaluacion;
+
+    historialTurnos.push({
+      turno: turnoActual,
+      frase_ia: textoIAActual,
+      respuesta_usuario: transcripcion,
+      evaluacion: evaluacion
+    });
+
+    const feedbackDiv = document.getElementById("feedbackTurno");
+    const textoFeedback = document.getElementById("textoFeedbackTurno");
+
+    if (evaluacion.correcto) {
+      feedbackDiv.className = "p-4 border-l-4 border-green-500 bg-green-50 rounded-lg";
+      textoFeedback.innerText = "✓ Bien. " + (evaluacion.feedback_breve || "");
+    } else {
+      feedbackDiv.className = "p-4 border-l-4 border-[#4a7c3f] bg-[#f4f2e0] rounded-lg";
+      textoFeedback.innerText = evaluacion.feedback_breve || "";
+    }
+
+    feedbackDiv.classList.remove("hidden");
+    document.getElementById("btnGrabar").disabled = true;
+
+    if (data.hay_mas_turnos) textoIAActual = evaluacion.continuacion_dialogo || "";
+
+  } catch(e) {
+    mostrarMensaje("Error al evaluar: " + e.message);
+  }
+}
+
+async function siguienteTurno() {
+  turnoActual++;
+  if (turnoActual <= 5) {
+    document.getElementById("turnoActual").innerText = turnoActual;
+    document.getElementById("textoIA").innerText = textoIAActual;
+    document.getElementById("transcripcionUsuario").innerText = "Presioná el botón para hablar...";
+    document.getElementById("feedbackTurno").classList.add("hidden");
+    restaurarBtnGrabar();
+    iniciarTimer();
+  } else {
+    await generarFeedbackFinal();
+  }
+}
+
+// ============================================================
+// FEEDBACK FINAL
+// ============================================================
+async function generarFeedbackFinal() {
+  mostrarMensaje("Generando resumen...");
+  ocultar("pantallaDialogo");
+
+  try {
+    const payload = {
+      action: "feedbackFinalOral",
+      email: emailUsuario,
+      sesion_id: sesionId,
+      contexto: contextoActual,
+      nivel: nivelOral,
+      idioma: idiomaOral,
+      historial: historialTurnos
+    };
+
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const resultado = await response.json();
+    const div = document.getElementById("contenidoFeedbackFinal");
+    div.innerHTML = "";
+
+    if (resultado.resumen_general) div.innerHTML += "<p class='mb-3'><strong>Resumen:</strong> " + resultado.resumen_general + "</p>";
+    if (resultado.puntos_positivos) div.innerHTML += "<p class='mb-3 text-green-700'>✓ " + resultado.puntos_positivos + "</p>";
+    if (resultado.errores_detectados && resultado.errores_detectados.length > 0) {
+      div.innerHTML += "<p class='font-medium mb-2'>Errores detectados:</p><ul class='list-disc list-inside mb-3'>";
+      resultado.errores_detectados.forEach(function(e) {
+        div.innerHTML += "<li class='mb-1'>" + e.tipo + ": " + e.descripcion + " (" + e.frecuencia + " vez/veces)</li>";
+      });
+      div.innerHTML += "</ul>";
+    }
+    if (resultado.sugerencia_siguiente) div.innerHTML += "<p class='text-gray-500 text-sm mt-3'>Próxima sesión sugerida: " + resultado.sugerencia_siguiente + "</p>";
+
+    mostrar("pantallaFeedbackFinal");
+
+  } catch(e) {
+    mostrarMensaje("Error al generar resumen: " + e.message);
+    mostrar("pantallaFeedbackFinal");
+  }
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function iniciarTimer() {
+  let seg = tiempoLimite;
+  document.getElementById("timerDisplay").innerText = seg + "s";
+  document.getElementById("timerBar").style.width = "100%";
+  clearInterval(timerInterval);
+  timerInterval = setInterval(function() {
+    seg--;
+    document.getElementById("timerDisplay").innerText = seg + "s";
+    document.getElementById("timerBar").style.width = ((seg / tiempoLimite) * 100) + "%";
+    if (seg <= 0) {
+      clearInterval(timerInterval);
+      if (mediaRecorder && mediaRecorder.state === "recording") detenerGrabacion();
+    }
+  }, 1000);
+}
+
+// ============================================================
+// UTILIDADES
+// ============================================================
+function mostrar(id) { const el = document.getElementById(id); if (el) el.style.display = "block"; }
+function ocultar(id) { const el = document.getElementById(id); if (el) el.style.display = "none"; }
+
+function restaurarBtnGrabar() {
+  const btn = document.getElementById("btnGrabar");
+  btn.innerText = "🎙️ Hablar";
+  btn.disabled = false;
+  btn.style.display = "block";
+  document.getElementById("btnDetener").style.display = "none";
+}
+
+function mostrarMensaje(texto) {
+  const box = document.getElementById("mensajeGlobal");
+  box.innerText = texto;
+  box.classList.remove("hidden");
+  if (texto.length < 100) setTimeout(function() { box.classList.add("hidden"); }, 5000);
+}
+</script>
+</body>
+</html>
