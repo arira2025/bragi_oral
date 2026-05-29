@@ -125,7 +125,7 @@
 // CONFIGURACIÓN
 // ============================================================
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbys674YLodLtXp0qGqUGWxQwl5f9psCdR1FZplE5L2tDD7IiqO787PvfCZ7ZL0RIQuO/exec";
-const OPENAI_API_KEY = "TU_API_KEY_AQUI"; // reemplazá con tu clave OpenAI
+const OPENAI_API_KEY = sk-proj-0RlGXa965JpZ8supufbNaGXdiX9j653nPQmsgSbycSHsgA; // falsa clave OpenAI
 
 // ============================================================
 // VARIABLES GLOBALES
@@ -195,7 +195,16 @@ async function elegirContexto(contexto) {
   mostrarMensaje("Preparando el diálogo...");
 
   try {
-    const response = await fetch(APPS_SCRIPT_URL + "?action=iniciarDialogo&email=" + encodeURIComponent(emailUsuario) + "&contexto=" + encodeURIComponent(contexto) + "&nivel=" + nivelOral + "&idioma=" + encodeURIComponent(idiomaOral));
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "iniciarDialogo",
+        email: emailUsuario,
+        contexto: contexto,
+        nivel: nivelOral,
+        idioma: idiomaOral
+      })
+    });
     const data = await response.json();
     textoIAActual = data.texto_ia;
 
