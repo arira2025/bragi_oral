@@ -210,6 +210,7 @@ async function elegirContexto(contexto) {
   try {
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "iniciarDialogo",
         email: emailUsuario,
@@ -296,6 +297,7 @@ async function procesarAudio(audioBlob) {
 
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "transcribirAudio",
         email: emailUsuario,
@@ -346,6 +348,7 @@ async function evaluarTurno(transcripcion) {
 
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
@@ -414,6 +417,7 @@ async function generarFeedbackFinal() {
 
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
 
@@ -490,6 +494,7 @@ async function consultarPalabraOral() {
   try {
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "consultarPalabra",
         email: emailUsuario,
