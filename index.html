@@ -97,6 +97,20 @@
         🔴 Grabando... tocá para detener
       </button>
     </div>
+<!-- Consulta de vocabulario — oral -->
+    <div class="mb-3">
+      <button onclick="document.getElementById('vocOral').style.display = document.getElementById('vocOral').style.display === 'none' ? 'block' : 'none'"
+        class="text-xs text-[#4a7c3f] hover:underline font-medium">🔍 Consultar una palabra</button>
+      <div id="vocOral" style="display:none;" class="mt-2">
+        <div class="flex gap-2">
+          <input id="inputPalabraOral" type="text" placeholder="Escribí la palabra..."
+            class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7c3f] transition">
+          <button onclick="consultarPalabraOral()"
+            class="bg-[#4a7c3f] hover:bg-[#2d5a33] text-white px-3 py-2 rounded-lg text-sm transition">Consultar</button>
+        </div>
+        <div id="resultadoVocOral" style="display:none;" class="mt-2 p-3 bg-[#f4f2e0] rounded-xl text-[#125423] text-sm"></div>
+      </div>
+    </div>
 
     <!-- Feedback del turno -->
     <div id="feedbackTurno" class="hidden p-4 border-l-4 border-[#4a7c3f] bg-[#f4f2e0] rounded-lg">
@@ -460,6 +474,38 @@ function mostrarMensaje(texto) {
   box.innerText = texto;
   box.classList.remove("hidden");
   if (texto.length < 100) setTimeout(function() { box.classList.add("hidden"); }, 5000);
+}
+async function consultarPalabraOral() {
+  const palabra = document.getElementById("inputPalabraOral").value.trim();
+  if (!palabra) { mostrarMensaje("Escribí una palabra."); return; }
+
+  const resultadoDiv = document.getElementById("resultadoVocOral");
+  resultadoDiv.style.display = "block";
+  resultadoDiv.innerHTML = "<p class='text-gray-400 italic'>Consultando...</p>";
+
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "consultarPalabra",
+        email: emailUsuario,
+        palabra: palabra,
+        nivel: nivelOral,
+        idioma: idiomaOral
+      })
+    });
+    const data = await response.json();
+    if (data.error) { resultadoDiv.innerHTML = "<p class='text-red-600'>Error: " + data.error + "</p>"; return; }
+    resultadoDiv.innerHTML = `
+      <p class="font-semibold mb-1">${data.palabra || palabra} <span class="text-gray-500 text-xs">(${data.categoria || ""})</span></p>
+      <p class="mb-1"><strong>Traducción:</strong> ${data.traduccion || ""}</p>
+      <p class="mb-1"><strong>Uso:</strong> ${data.uso || ""}</p>
+      ${data.posicion_oracion ? `<p class="mb-1"><strong>Posición:</strong> ${data.posicion_oracion}</p>` : ""}
+      <p class="mt-1">• ${data.ejemplo_1 || ""} <span class="text-gray-400">(${data.ejemplo_1_traduccion || ""})</span></p>
+      <p>• ${data.ejemplo_2 || ""} <span class="text-gray-400">(${data.ejemplo_2_traduccion || ""})</span></p>`;
+  } catch(e) {
+    resultadoDiv.innerHTML = "<p class='text-red-600'>Error: " + e.message + "</p>";
+  }
 }
 </script>
 </body>
