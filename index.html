@@ -307,7 +307,11 @@ async function procesarAudio(audioBlob) {
     const data = await response.json();
 
     if (data.error) {
-      mostrarMensaje("Error en transcripción: " + data.error);
+      if (data.error && data.error.includes("decoded")) {
+        mostrarMensaje("No se ha grabado ningún mensaje.");
+      } else {
+        mostrarMensaje("Error en transcripción: " + data.error);
+      }
       restaurarBtnGrabar();
       return;
     }
