@@ -477,7 +477,7 @@ function mostrarMensaje(texto) {
   const box = document.getElementById("mensajeGlobal");
   box.innerText = texto;
   box.classList.remove("hidden");
-  if (texto.length < 100) setTimeout(function() { box.classList.add("hidden"); }, 5000);
+  setTimeout(function() { box.classList.add("hidden"); }, 6000);
 }
 async function consultarPalabraOral() {
   const palabra = document.getElementById("inputPalabraOral").value.trim();
