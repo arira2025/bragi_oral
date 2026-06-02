@@ -126,10 +126,10 @@
   <div id="pantallaFeedbackFinal" style="display:none;">
     <h2 class="text-2xl font-semibold text-[#125423] mb-4">Resumen de la sesión</h2>
     <div id="contenidoFeedbackFinal" class="p-5 bg-[#f4f2e0] rounded-xl text-[#125423] mb-6"></div>
-    <a href="https://script.google.com/macros/s/AKfycbzaOMtIjwlOUujJO-g0idyNbIw8xz2QgHyKn7w7Yl-MqAibuCxbeYzyuzolkJXlNked/exec"
-      class="block w-full text-center bg-[#125423] hover:bg-[#0a3d1a] text-white px-5 py-3 rounded-lg transition shadow font-medium">
-      Volver al Menú
-    </a>
+    <button onclick="cerrarSesionOralGH()"
+  class="w-full bg-[#125423] hover:bg-[#0a3d1a] text-white px-5 py-3 rounded-lg transition shadow font-medium">
+  Cerrar sesión
+</button>
   </div>
 
 </div>
@@ -515,6 +515,13 @@ async function consultarPalabraOral() {
   } catch(e) {
     resultadoDiv.innerHTML = "<p class='text-red-600'>Error: " + e.message + "</p>";
   }
+}
+
+function cerrarSesionOralGH() {
+  document.getElementById("pantallaFeedbackFinal").style.display = "none";
+  document.getElementById("contenidoFeedbackFinal").innerHTML = "";
+  document.getElementById("mensajeGlobal").innerText = "¡Espero que vuelvas pronto!";
+  document.getElementById("mensajeGlobal").classList.remove("hidden");
 }
 </script>
 </body>
