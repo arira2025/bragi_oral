@@ -343,7 +343,8 @@ async function evaluarTurno(transcripcion) {
       idioma: idiomaOral,
       turno_numero: turnoActual,
       texto_ia_anterior: textoIAActual,
-      transcripcion_usuario: transcripcion
+      transcripcion_usuario: transcripcion,
+      historial: historialTurnos
     };
 
     const response = await fetch(APPS_SCRIPT_URL, {
