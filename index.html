@@ -224,6 +224,7 @@ async function elegirContexto(contexto) {
 
     document.getElementById("contextoActual").innerText = contexto;
     document.getElementById("textoIA").innerText = textoIAActual;
+    reproducirAudioTTS(textoIAActual);
     document.getElementById("turnoActual").innerText = turnoActual;
 
     ocultar("pantallaContexto");
@@ -378,6 +379,7 @@ async function evaluarTurno(transcripcion) {
     document.getElementById("btnGrabar").disabled = true;
 
     if (data.hay_mas_turnos) textoIAActual = evaluacion.continuacion_dialogo || "";
+    if (data.hay_mas_turnos && evaluacion.continuacion_dialogo) reproducirAudioTTS(evaluacion.continuacion_dialogo);
 
   } catch(e) {
     mostrarMensaje("Error al evaluar: " + e.message);
@@ -464,6 +466,20 @@ function iniciarTimer() {
   }, 1000);
 }
 
+async function reproducirAudioTTS(texto) {
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "tts", texto: texto })
+    });
+    const data = await response.json();
+    if (data && data.audio_base64) {
+      const audio = new Audio("data:audio/mpeg;base64," + data.audio_base64);
+      audio.play();
+    }
+  } catch(e) {}
+}
 // ============================================================
 // UTILIDADES
 // ============================================================
@@ -524,6 +540,7 @@ function cerrarSesionOralGH() {
   document.getElementById("mensajeGlobal").innerText = "¡Espero que vuelvas pronto!";
   document.getElementById("mensajeGlobal").classList.remove("hidden");
 }
+
 </script>
 </body>
 </html>
