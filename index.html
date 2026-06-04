@@ -118,6 +118,10 @@
     <!-- Feedback del turno -->
     <div id="feedbackTurno" class="hidden p-4 border-l-4 border-[#4a7c3f] bg-[#f4f2e0] rounded-lg">
       <p id="textoFeedbackTurno" class="text-[#125423] mb-3"></p>
+<button id="btnEscucharModelo" onclick="escucharFraseModelo()" style="display:none;"
+  class="w-full bg-[#c9a84c] hover:bg-[#a8873a] text-[#125423] px-4 py-2 rounded-lg transition shadow mb-3 font-medium">
+  🔊 Escuchar frase modelo
+</button>
       <button onclick="siguienteTurno()"
         class="w-full bg-[#125423] hover:bg-[#0a3d1a] text-white px-4 py-2 rounded-lg transition shadow">
         Continuar
@@ -383,6 +387,16 @@ async function evaluarTurno(transcripcion) {
 
     feedbackDiv.classList.remove("hidden");
     document.getElementById("btnGrabar").disabled = true;
+const btnModelo = document.getElementById("btnEscucharModelo");
+if (evaluacion.frase_modelo && evaluacion.frase_modelo.length > 0) {
+  btnModelo.style.display = "inline-block";
+  btnModelo.setAttribute("data-frases", JSON.stringify(evaluacion.frase_modelo));
+  const fraseTexto = document.getElementById("textoFeedbackTurno");
+  fraseTexto.innerHTML += "<br><br><strong>Podés decirlo así:</strong><br>" +
+    evaluacion.frase_modelo.map((f, i) => `${i+1}. ${f}`).join("<br>");
+} else {
+  btnModelo.style.display = "none";
+}
 
     if (data.hay_mas_turnos) textoIAActual = evaluacion.continuacion_dialogo || "";
     if (data.hay_mas_turnos && evaluacion.continuacion_dialogo) reproducirAudioTTS(evaluacion.continuacion_dialogo);
@@ -486,6 +500,11 @@ async function reproducirAudioTTS(texto) {
     }
   } catch(e) {}
 }
+
+function escucharFraseModelo() {
+  const frases = JSON.parse(document.getElementById("btnEscucharModelo").getAttribute("data-frases") || "[]");
+  if (frases.length > 0) reproducirAudioTTS(frases[0]);
+}
 // ============================================================
 // UTILIDADES
 // ============================================================
@@ -564,6 +583,9 @@ window.onload = function() {
 };
 
 function cambiarConfiguracion() {
+  document.getElementById("emailUsuario").value = emailUsuario;
+  document.getElementById("nivelOral").value = nivelOral;
+  document.getElementById("idiomaOral").value = idiomaOral;
   ocultar("pantallaContexto");
   mostrar("pantallaIdentificacion");
 }
