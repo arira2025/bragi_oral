@@ -120,7 +120,7 @@
       <p id="textoFeedbackTurno" class="text-[#125423] mb-3"></p>
 <button id="btnEscucharModelo" onclick="escucharFraseModelo()" style="display:none;"
   class="w-full bg-[#c9a84c] hover:bg-[#a8873a] text-[#125423] px-4 py-2 rounded-lg transition shadow mb-3 font-medium">
-  🔊 Escuchar frase modelo
+  🔊 OPCIONAL: Escuchar frase/s modelo
 </button>
       <button onclick="siguienteTurno()"
         class="w-full bg-[#125423] hover:bg-[#0a3d1a] text-white px-4 py-2 rounded-lg transition shadow">
@@ -232,18 +232,19 @@ async function elegirContexto(contexto) {
     const data = await response.json();
     textoIAActual = data.texto_ia;
 
-    document.getElementById("contextoActual").innerText = contexto;
-    document.getElementById("textoIA").innerText = textoIAActual;
-    reproducirAudioTTS(textoIAActual);
-    document.getElementById("turnoActual").innerText = turnoActual;
+   document.getElementById("contextoActual").innerText = contexto;
+document.getElementById("textoIA").innerText = textoIAActual;
+document.getElementById("turnoActual").innerText = turnoActual;
 
-    ocultar("pantallaContexto");
-    mostrar("pantallaDialogo");
-    document.getElementById("feedbackTurno").classList.add("hidden");
+ocultar("pantallaContexto");
+mostrar("pantallaDialogo");
+document.getElementById("feedbackTurno").classList.add("hidden");
 
-    const tiempos = { A2: 30, B1: 20, B2: 15 };
-    tiempoLimite = tiempos[nivelOral] || 30;
-    iniciarTimer();
+await reproducirAudioTTS(textoIAActual);
+
+const tiempos = { A2: 30, B1: 20, B2: 15 };
+tiempoLimite = tiempos[nivelOral] || 30;
+iniciarTimer();;
 
   } catch(e) {
     mostrarMensaje("Error al iniciar el diálogo. Intentá de nuevo.");
