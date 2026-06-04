@@ -54,7 +54,10 @@
       <button onclick="elegirContexto('Cita médica')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">👨‍⚕️ Cita médica</button>
       <button onclick="elegirContexto('Reclamo')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">📋 Reclamo</button>
       <button onclick="elegirContexto('Pedir ayuda por accidente')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition col-span-2">🚨 Pedir ayuda por accidente</button>
-    </div>
+       <button onclick="elegirContexto('Entrevista laboral')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">💼 Entrevista laboral</button>
+      <button onclick="elegirContexto('Pedir información por un servicio')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">📋 Pedir información por un servicio</button>
+      <button onclick="cambiarConfiguracion()" class="col-span-2 text-xs text-gray-400 hover:text-[#125423] underline mt-2">⚙️ Cambiar nivel o idioma</button>
+</div>
   </div>
 
   <!-- PANTALLA 3: Diálogo -->
@@ -166,6 +169,9 @@ function confirmarIdentidad() {
     return;
   }
   emailUsuario = email;
+localStorage.setItem("bragi_email", email);
+localStorage.setItem("bragi_nivel", document.getElementById("nivelOral").value);
+localStorage.setItem("bragi_idioma", document.getElementById("idiomaOral").value);
   nivelOral = document.getElementById("nivelOral").value;
   idiomaOral = document.getElementById("idiomaOral").value;
   sesionId = "ses_oral_" + new Date().getTime();
@@ -541,6 +547,26 @@ function cerrarSesionOralGH() {
   document.getElementById("mensajeGlobal").classList.remove("hidden");
 }
 
+
+window.onload = function() {
+  const emailGuardado = localStorage.getItem("bragi_email");
+  if (emailGuardado) {
+    emailUsuario = emailGuardado;
+    nivelOral = localStorage.getItem("bragi_nivel") || "A2";
+    idiomaOral = localStorage.getItem("bragi_idioma") || "Español";
+    document.getElementById("emailUsuario").value = emailUsuario;
+    document.getElementById("nivelOral").value = nivelOral;
+    document.getElementById("idiomaOral").value = idiomaOral;
+    cargarContextosSugeridos();
+    ocultar("pantallaIdentificacion");
+    mostrar("pantallaContexto");
+  }
+};
+
+function cambiarConfiguracion() {
+  ocultar("pantallaContexto");
+  mostrar("pantallaIdentificacion");
+}
 </script>
 </body>
 </html>
