@@ -388,7 +388,7 @@ async function evaluarTurno(transcripcion) {
     feedbackDiv.classList.remove("hidden");
     document.getElementById("btnGrabar").disabled = true;
 const btnModelo = document.getElementById("btnEscucharModelo");
-if (evaluacion.frase_modelo && evaluacion.frase_modelo.length > 0) {
+   if (evaluacion.frase_modelo && evaluacion.frase_modelo.length > 0) {
   btnModelo.style.display = "inline-block";
   btnModelo.setAttribute("data-frases", JSON.stringify(evaluacion.frase_modelo));
   const fraseTexto = document.getElementById("textoFeedbackTurno");
@@ -399,8 +399,7 @@ if (evaluacion.frase_modelo && evaluacion.frase_modelo.length > 0) {
 }
 
     if (data.hay_mas_turnos) textoIAActual = evaluacion.continuacion_dialogo || "";
-    if (data.hay_mas_turnos && evaluacion.continuacion_dialogo) reproducirAudioTTS(evaluacion.continuacion_dialogo);
-
+   
   } catch(e) {
     mostrarMensaje("Error al evaluar: " + e.message);
   }
@@ -414,7 +413,12 @@ async function siguienteTurno() {
     document.getElementById("transcripcionUsuario").innerText = "Presioná el botón para hablar...";
     document.getElementById("feedbackTurno").classList.add("hidden");
     restaurarBtnGrabar();
-    iniciarTimer();
+
+     if (textoIAActual) {
+  await reproducirAudioTTS(textoIAActual);
+}
+
+iniciarTimer();
   } else {
     await generarFeedbackFinal();
   }
