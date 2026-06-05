@@ -12,7 +12,7 @@
   <div id="mensajeGlobal" class="hidden mt-2 mb-4 p-3 rounded-lg bg-[#f4f2e0] border-l-4 border-[#4a7c3f] text-[#125423] font-medium"></div>
 
   <!-- PANTALLA 1: Identificación -->
-  <div id="pantallaIdentificacion">
+  <div id="pantallaIdentificacion" style="display:none;">
     <h2 class="text-2xl font-semibold text-[#125423] mb-2">🎙️ Ejercitación oral con Bragi</h2>
     <p class="text-gray-600 mb-6">Ingresá tu email para continuar con tu historial de práctica.</p>
     <label class="font-medium text-[#125423]">Tu email (el mismo que usás en la app)</label>
@@ -71,7 +71,11 @@
     <!-- Burbuja IA -->
     <div class="bg-[#f0f4e8] rounded-xl p-4 mb-4">
       <p class="text-xs text-gray-500 mb-1">IA:</p>
-      <p id="textoIA" class="text-[#125423] font-medium"></p>
+      <p id="textoIA" class="text-[#125423] font-medium" style="display:none;"></p>
+    <button id="btnVerOracion" onclick="verOracionEscrita()"
+       class="mt-2 text-xs text-[#4a7c3f] hover:underline font-medium">👁️ Ver oración escrita (opcional)</button>
+<button onclick="escucharNuevamente()"
+  class="mt-1 text-xs text-[#4a7c3f] hover:underline font-medium">🔁 Escuchar nuevamente</button>
     </div>
 
     <!-- Timer -->
@@ -158,6 +162,10 @@ let turnoActual = 1;
 let textoIAActual = "";
 let sesionId = "";
 let historialTurnos = [];
+let ayudaVerOracion = false;
+let ayudaEscucharModelo = false;
+let ayudaConsultarPalabra = false;
+let ayudaEscucharNuevamente = false;
 let timerInterval = null;
 let tiempoLimite = 30;
 let mediaRecorder = null;
@@ -214,6 +222,8 @@ async function elegirContexto(contexto) {
   contextoActual = contexto;
   turnoActual = 1;
   historialTurnos = [];
+  ayudaVerOracion = false; ayudaEscucharModelo = false;
+  ayudaConsultarPalabra = false; ayudaEscucharNuevamente = false;
 
   mostrarMensaje("Preparando el diálogo...");
 
@@ -357,6 +367,10 @@ async function evaluarTurno(transcripcion) {
       texto_ia_anterior: textoIAActual,
       transcripcion_usuario: transcripcion,
       historial: historialTurnos
+ayuda_ver_oracion: ayudaVerOracion,
+ayuda_escuchar_modelo: ayudaEscucharModelo,
+ayuda_consultar_palabra: ayudaConsultarPalabra,
+ayuda_escuchar_nuevamente: ayudaEscucharNuevamente
     };
 
     const response = await fetch(APPS_SCRIPT_URL, {
@@ -407,6 +421,10 @@ const btnModelo = document.getElementById("btnEscucharModelo");
 }
 
 async function siguienteTurno() {
+ayudaVerOracion = false; ayudaEscucharModelo = false;
+ayudaConsultarPalabra = false; ayudaEscucharNuevamente = false;
+document.getElementById("textoIA").style.display = "none";
+document.getElementById("btnVerOracion").style.display = "inline";
   turnoActual++;
   if (turnoActual <= 5) {
     document.getElementById("turnoActual").innerText = turnoActual;
@@ -521,11 +539,16 @@ async function reproducirAudioTTS(texto) {
 }
 
 async function escucharFraseModelo() {
+  ayudaEscucharModelo = true;
+  ayudaVerOracion = false;
+  ayudaConsultarPalabra = false;
+  ayudaEscucharNuevamente = false;
+  document.getElementById("textoIA").style.display = "none";
+  document.getElementById("btnVerOracion").style.display = "inline";
   const frases = JSON.parse(
     document.getElementById("btnEscucharModelo")
       .getAttribute("data-frases") || "[]"
   );
-
   for (const frase of frases) {
     await reproducirAudioTTS(frase);
   }
@@ -592,7 +615,7 @@ function cerrarSesionOralGH() {
 }
 
 
-window.onload = function() {
+document.addEventListener("DOMContentLoaded", function() {
   const emailGuardado = localStorage.getItem("bragi_email");
   if (emailGuardado) {
     emailUsuario = emailGuardado;
@@ -604,8 +627,10 @@ window.onload = function() {
     cargarContextosSugeridos();
     ocultar("pantallaIdentificacion");
     mostrar("pantallaContexto");
-  }
-};
+} else {
+    document.getElementById("pantallaIdentificacion").style.display = "block";
+    }
+} ) ;
 
 function cambiarConfiguracion() {
   document.getElementById("emailUsuario").value = emailUsuario;
@@ -613,6 +638,17 @@ function cambiarConfiguracion() {
   document.getElementById("idiomaOral").value = idiomaOral;
   ocultar("pantallaContexto");
   mostrar("pantallaIdentificacion");
+}
+
+function verOracionEscrita() {
+  document.getElementById("textoIA").style.display = "block";
+  document.getElementById("btnVerOracion").style.display = "none";
+  ayudaVerOracion = true;
+}
+
+function escucharNuevamente() {
+  ayudaEscucharNuevamente = true;
+  reproducirAudioTTS(textoIAActual);
 }
 </script>
 </body>
