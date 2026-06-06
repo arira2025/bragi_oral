@@ -648,9 +648,12 @@ function cerrarSesionOralGH() {
 
 
 document.addEventListener("DOMContentLoaded", function() {
-  const emailGuardado = localStorage.getItem("bragi_email");
+  const params = new URLSearchParams(window.location.search);
+  const emailParam = params.get("email");
+  const emailGuardado = emailParam || localStorage.getItem("bragi_email");
   if (emailGuardado) {
     emailUsuario = emailGuardado;
+    localStorage.setItem("bragi_email", emailGuardado);
     nivelOral = localStorage.getItem("bragi_nivel") || "A2";
     idiomaOral = localStorage.getItem("bragi_idioma") || "Español";
     document.getElementById("emailUsuario").value = emailUsuario;
@@ -659,10 +662,10 @@ document.addEventListener("DOMContentLoaded", function() {
     cargarContextosSugeridos();
     ocultar("pantallaIdentificacion");
     mostrar("pantallaContexto");
-} else {
+  } else {
     document.getElementById("pantallaIdentificacion").style.display = "block";
-    }
-} ) ;
+  }
+});
 
 function cambiarConfiguracion() {
   document.getElementById("nivelOral").value = nivelOral;
