@@ -104,8 +104,8 @@
     </div>
 <!-- Consulta de vocabulario — oral -->
     <div class="mb-3">
-      <button onclick="document.getElementById('vocOral').style.display = document.getElementById('vocOral').style.display === 'none' ? 'block' : 'none'"
-        class="text-xs text-[#4a7c3f] hover:underline font-medium">🔍 Consultar una palabra</button>
+     <button id="btnConsultarPalabraOral" onclick="toggleVocOral()"
+  class="text-xs text-[#4a7c3f] hover:underline font-medium">🔍 Consultar una palabra</button>
       <div id="vocOral" style="display:none;" class="mt-2">
         <div class="flex gap-2">
           <input id="inputPalabraOral" type="text" placeholder="Escribí la palabra..."
@@ -646,6 +646,20 @@ function verOracionEscrita() {
 function escucharNuevamente() {
   ayudaEscucharNuevamente = true;
   reproducirAudioTTS(textoIAActual);
+}
+function toggleVocOral() {
+  const panel = document.getElementById("vocOral");
+  const btn = document.getElementById("btnConsultarPalabraOral");
+  const resultado = document.getElementById("resultadoVocOral");
+  if (panel.style.display === "none") {
+    panel.style.display = "block";
+    btn.innerText = "🔍 Ocultar consulta";
+  } else {
+    panel.style.display = "none";
+    resultado.style.display = "none";
+    resultado.innerHTML = "";
+    btn.innerText = "🔍 Consultar una palabra";
+  }
 }
 </script>
 </body>
