@@ -124,9 +124,9 @@
   class="w-full bg-[#c9a84c] hover:bg-[#a8873a] text-[#125423] px-4 py-2 rounded-lg transition shadow mb-3 font-medium">
   🔊 OPCIONAL: Bragi te lee la/s frase/s modelo
 </button>
-      <button onclick="siguienteTurno()"
-        class="w-full bg-[#125423] hover:bg-[#0a3d1a] text-white px-4 py-2 rounded-lg transition shadow">
-        Continuar
+      <button onclick="siguienteTurno()" id="btnSiguiente"
+  	class="w-full bg-[#125423] hover:bg-[#0a3d1a] text-white px-4 py-2 rounded-lg transition shadow">
+  	Continuar
       </button>
     </div>
   </div>
@@ -433,6 +433,7 @@ async function evaluarTurno(transcripcion) {
     }
 
     feedbackDiv.classList.remove("hidden");
+document.getElementById("btnSiguiente").innerText = (turnoActual === 5) ? "Finalizar" : "Continuar";
     document.getElementById("btnGrabar").disabled = true;
 const btnModelo = document.getElementById("btnEscucharModelo");
    if (evaluacion.frase_modelo && evaluacion.frase_modelo.length > 0) {
@@ -703,7 +704,7 @@ function volverAlMenuOral() {
   document.getElementById("pantallaFeedbackFinal").style.display = "none";
   document.getElementById("pantallaDialogo").style.display = "none";
   document.getElementById("contenidoFeedbackFinal").innerHTML = "";
-  document.getElementById("pantallaContexto").style.display = "block";
+  window.location.href = APPS_SCRIPT_URL;
 }
 </script>
 </body>
