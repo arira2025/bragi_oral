@@ -274,10 +274,10 @@ async function elegirContexto(contexto) {
     });
     const data = await response.json();
     textoIAActual = data.texto_ia;
-
+    if (data.sesion_id) sesionId = data.sesion_id;
    document.getElementById("contextoActual").innerText = contexto;
-document.getElementById("textoIA").innerText = textoIAActual;
-document.getElementById("turnoActual").innerText = turnoActual;
+   document.getElementById("textoIA").innerText = textoIAActual;
+   document.getElementById("turnoActual").innerText = turnoActual;
 
 ocultar("pantallaContexto");
 mostrar("pantallaDialogo");
