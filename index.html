@@ -540,13 +540,15 @@ function iniciarTimer() {
     seg--;
     document.getElementById("timerDisplay").innerText = seg + "s";
     document.getElementById("timerBar").style.width = ((seg / tiempoLimite) * 100) + "%";
-    if (seg <= 0) {
-       tiempoAgotado = true;
+   if (seg <= 0) {
+      tiempoAgotado = true;
       clearInterval(timerInterval);
-      if (mediaRecorder && mediaRecorder.state === "recording") detenerGrabacion();
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        detenerGrabacion();
+      } else {
+        evaluarTurno("");
+      }
     }
-  }, 1000);
-}
 
 async function reproducirAudioTTS(texto) {
   try {
@@ -580,8 +582,6 @@ async function reproducirAudioTTS(texto) {
 async function escucharFraseModelo() {
   ayudaEscucharModelo++;
   ayudaVerOracion = false;
-  ayudaConsultarPalabra = 0;
-  ayudaEscucharNuevamente = 0;
   document.getElementById("textoIA").style.display = "none";
   document.getElementById("btnVerOracion").style.display = "inline";
   const frases = JSON.parse(
