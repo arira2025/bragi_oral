@@ -195,9 +195,9 @@ let textoIAActual = "";
 let sesionId = "";
 let historialTurnos = [];
 let ayudaVerOracion = false;
-let ayudaEscucharModelo = false;
-let ayudaConsultarPalabra = false;
-let ayudaEscucharNuevamente = false;
+let ayudaEscucharModelo = 0;
+let ayudaConsultarPalabra = 0;
+let ayudaEscucharNuevamente = 0;
 let timerInterval = null;
 let tiempoLimite = 30;
 let mediaRecorder = null;
@@ -402,7 +402,8 @@ async function evaluarTurno(transcripcion) {
       ayuda_ver_oracion: ayudaVerOracion,
       ayuda_escuchar_modelo: ayudaEscucharModelo,
       ayuda_consultar_palabra: ayudaConsultarPalabra,
-      ayuda_escuchar_nuevamente: ayudaEscucharNuevamente
+      ayuda_escuchar_nuevamente: ayudaEscucharNuevamente,
+      tiempo_agotado: (document.getElementById("timerDisplay").innerText === "0s")
     };
 
     const response = await fetch(APPS_SCRIPT_URL, {
@@ -454,8 +455,10 @@ const btnModelo = document.getElementById("btnEscucharModelo");
 }
 
 async function siguienteTurno() {
-ayudaVerOracion = false; ayudaEscucharModelo = false;
-ayudaConsultarPalabra = false; ayudaEscucharNuevamente = false;
+ayudaVerOracion = false;
+ayudaEscucharModelo = 0;
+ayudaConsultarPalabra = 0; 
+ayudaEscucharNuevamente = 0;
 document.getElementById("textoIA").style.display = "none";
 document.getElementById("btnVerOracion").style.display = "inline";
   turnoActual++;
@@ -572,10 +575,10 @@ async function reproducirAudioTTS(texto) {
 }
 
 async function escucharFraseModelo() {
-  ayudaEscucharModelo = true;
+  ayudaEscucharModelo++;
   ayudaVerOracion = false;
-  ayudaConsultarPalabra = false;
-  ayudaEscucharNuevamente = false;
+  ayudaConsultarPalabra = 0;
+  ayudaEscucharNuevamente = 0;
   document.getElementById("textoIA").style.display = "none";
   document.getElementById("btnVerOracion").style.display = "inline";
   const frases = JSON.parse(
@@ -607,6 +610,7 @@ function mostrarMensaje(texto) {
   setTimeout(function() { box.classList.add("hidden"); }, 6000);
 }
 async function consultarPalabraOral() {
+ayudaConsultarPalabra++;
   const palabra = document.getElementById("inputPalabraOral").value.trim();
   if (!palabra) { mostrarMensaje("Escribí una palabra."); return; }
 
@@ -682,7 +686,7 @@ function verOracionEscrita() {
 }
 
 function escucharNuevamente() {
-  ayudaEscucharNuevamente = true;
+  ayudaEscucharNuevamente++;
   reproducirAudioTTS(textoIAActual);
 }
 function toggleVocOral() {
