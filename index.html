@@ -202,6 +202,7 @@ let timerInterval = null;
 let tiempoLimite = 30;
 let mediaRecorder = null;
 let audioChunks = [];
+let tiempoAgotado = false;
 
 // ============================================================
 // PANTALLA 1: Identificación
@@ -403,7 +404,7 @@ async function evaluarTurno(transcripcion) {
       ayuda_escuchar_modelo: ayudaEscucharModelo,
       ayuda_consultar_palabra: ayudaConsultarPalabra,
       ayuda_escuchar_nuevamente: ayudaEscucharNuevamente,
-      tiempo_agotado: (document.getElementById("timerDisplay").innerText === "0s")
+      tiempo_agotado: tiempoAgotado
     };
 
     const response = await fetch(APPS_SCRIPT_URL, {
@@ -455,6 +456,7 @@ const btnModelo = document.getElementById("btnEscucharModelo");
 }
 
 async function siguienteTurno() {
+tiempoAgotado = false;
 ayudaVerOracion = false;
 ayudaEscucharModelo = 0;
 ayudaConsultarPalabra = 0; 
@@ -539,6 +541,7 @@ function iniciarTimer() {
     document.getElementById("timerDisplay").innerText = seg + "s";
     document.getElementById("timerBar").style.width = ((seg / tiempoLimite) * 100) + "%";
     if (seg <= 0) {
+       tiempoAgotado = true;
       clearInterval(timerInterval);
       if (mediaRecorder && mediaRecorder.state === "recording") detenerGrabacion();
     }
