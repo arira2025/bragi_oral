@@ -255,8 +255,8 @@ async function elegirContexto(contexto) {
   contextoActual = contexto;
   turnoActual = 1;
   historialTurnos = [];
-  ayudaVerOracion = false; ayudaEscucharModelo = false;
-  ayudaConsultarPalabra = false; ayudaEscucharNuevamente = false;
+  ayudaVerOracion = false; ayudaEscucharModelo = 0;
+  ayudaConsultarPalabra = 0; ayudaEscucharNuevamente = 0;
 
   mostrarMensaje("Preparando el diálogo...");
 
@@ -536,7 +536,7 @@ function iniciarTimer() {
   document.getElementById("timerDisplay").innerText = seg + "s";
   document.getElementById("timerBar").style.width = "100%";
   clearInterval(timerInterval);
-  timerInterval = setInterval(function() {
+ timerInterval = setInterval(async function() {
     seg--;
     document.getElementById("timerDisplay").innerText = seg + "s";
     document.getElementById("timerBar").style.width = ((seg / tiempoLimite) * 100) + "%";
@@ -546,7 +546,7 @@ function iniciarTimer() {
       if (mediaRecorder && mediaRecorder.state === "recording") {
         detenerGrabacion();
       } else {
-        evaluarTurno("");
+        await evaluarTurno("");
       }
     }
 }, 1000);
