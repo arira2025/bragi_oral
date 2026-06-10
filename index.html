@@ -203,6 +203,7 @@ let tiempoLimite = 30;
 let mediaRecorder = null;
 let audioChunks = [];
 let tiempoAgotado = false;
+let audioActivo = true;
 
 // ============================================================
 // PANTALLA 1: Identificación
@@ -254,6 +255,7 @@ async function cargarContextosSugeridos() {
 async function elegirContexto(contexto) {
   contextoActual = contexto;
   turnoActual = 1;
+  audioActivo = true;
   historialTurnos = [];
   ayudaVerOracion = false; ayudaEscucharModelo = 0;
   ayudaConsultarPalabra = 0; ayudaEscucharNuevamente = 0;
@@ -486,6 +488,7 @@ if (ayudaEscucharModelo > 0) {
     });
   }
 tiempoAgotado = false;
+audioActivo = true;
 ayudaVerOracion = false;
 ayudaEscucharModelo = 0;
 ayudaConsultarPalabra = 0; 
@@ -514,6 +517,7 @@ iniciarTimer();
 // FEEDBACK FINAL
 // ============================================================
 async function generarFeedbackFinal() {
+  audioActivo = false;
   mostrarMensaje("Generando resumen...");
   ocultar("pantallaDialogo");
 
@@ -582,6 +586,7 @@ function iniciarTimer() {
 }
 
 async function reproducirAudioTTS(texto) {
+  if (!audioActivo) return;
   try {
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
@@ -621,12 +626,15 @@ async function escucharFraseModelo() {
     document.getElementById("btnEscucharModelo")
       .getAttribute("data-frases") || "[]"
   );
-  for (const frase of frases) {
-    await reproducirAudioTTS(frase);
+  try {
+    for (const frase of frases) {
+      await reproducirAudioTTS(frase);
+    }
+  } finally {
+    document.getElementById("btnEscucharModelo").disabled = false;
+    document.getElementById("btnEscucharModelo").innerText = "🔊 OPCIONAL: Bragi te lee la/s frase/s modelo";
   }
-  document.getElementById("btnEscucharModelo").disabled = false;
-  document.getElementById("btnEscucharModelo").innerText = "🔊 OPCIONAL: Bragi te lee la/s frase/s modelo";
-}
+  
 // ============================================================
 // UTILIDADES
 // ============================================================
