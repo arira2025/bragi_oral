@@ -437,24 +437,25 @@ async function evaluarTurno(transcripcion) {
     }
 
     feedbackDiv.classList.remove("hidden");
-document.getElementById("btnSiguiente").innerText = (turnoActual === 5) ? "Finalizar" : "Continuar";
-document.getElementById("btnSiguiente").onclick = (turnoActual === 5) ? async function() {
-  if (ayudaEscucharModelo > 0) {
-    await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({
-        action: "actualizarAyudaModelo",
-        email: emailUsuario,
-        sesion_id: sesionId,
-        turno_numero: turnoActual,
-        ayuda_escuchar_modelo: ayudaEscucharModelo
-      })
-    });
-  }
-  siguienteTurno();
-};
-    function() { siguienteTurno(); };
+    document.getElementById("btnSiguiente").innerText = (turnoActual === 5) ? "Finalizar" : "Continuar";
+    document.getElementById("btnSiguiente").onclick = async function() {
+      if (turnoActual === 5 && ayudaEscucharModelo > 0) {
+        await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({
+            action: "actualizarAyudaModelo",
+            email: emailUsuario,
+            sesion_id: sesionId,
+            turno_numero: turnoActual,
+            ayuda_escuchar_modelo: ayudaEscucharModelo
+          })
+        });
+      }
+      siguienteTurno();
+    };
+
+      function() { siguienteTurno(); };
     document.getElementById("btnGrabar").disabled = true;
 const btnModelo = document.getElementById("btnEscucharModelo");
    if (evaluacion.frase_modelo && evaluacion.frase_modelo.length > 0) {
