@@ -359,7 +359,8 @@ async function procesarAudio(audioBlob) {
         action: "transcribirAudio",
         email: emailUsuario,
         audio_base64: base64,
-        mime_type: audioBlob.type || "audio/webm"
+        mime_type: audioBlob.type || "audio/webm",
+        idioma: idiomaOral
       })
     });
 
@@ -706,8 +707,10 @@ document.addEventListener("DOMContentLoaded", function() {
   if (emailGuardado) {
     emailUsuario = emailGuardado;
     localStorage.setItem("bragi_email", emailGuardado);
-    nivelOral = localStorage.getItem("bragi_nivel") || "A2";
-    idiomaOral = localStorage.getItem("bragi_idioma") || "Español";
+    nivelOral = params.get("nivel") || localStorage.getItem("bragi_nivel") || "A2";
+    const idiomaParam = params.get("idioma");
+    idiomaOral = idiomaParam || localStorage.getItem("bragi_idioma") || "Español";
+    if (idiomaParam) localStorage.setItem("bragi_idioma", idiomaParam);
     document.getElementById("emailUsuario").value = emailUsuario;
     document.getElementById("nivelOral").value = nivelOral;
     document.getElementById("idiomaOral").value = idiomaOral;
