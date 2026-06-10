@@ -73,7 +73,7 @@
     <button id="btnVerOracion" onclick="verOracionEscrita()"
        class="mt-2 text-xs text-[#4a7c3f] hover:underline font-medium">👁️ Ver oración escrita (opcional)</button>
 <button onclick="escucharNuevamente()"
-  class="mt-1 text-xs text-[#4a7c3f] hover:underline font-medium">🔁 Escuchar nuevamente</button>
+  class="mt-1 text-xs text-[#4a7c3f] hover:underline font-medium">🔁 Escuchar nuevamente (opcional)</button>
     </div>
 
     <!-- Timer -->
@@ -619,7 +619,7 @@ async function reproducirAudioTTS(texto) {
 async function escucharFraseModelo() {
   ayudaEscucharModelo++;
   document.getElementById("btnEscucharModelo").disabled = true;
-  document.getElementById("btnEscucharModelo").innerText = "⏳ Preparando...";
+  document.getElementById("btnEscucharModelo").innerText = "⏳ Bragi está preparando su voz...";
   ayudaVerOracion = false;
   document.getElementById("textoIA").style.display = "none";
   document.getElementById("btnVerOracion").style.display = "inline";
