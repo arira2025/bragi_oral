@@ -436,6 +436,22 @@ async function evaluarTurno(transcripcion) {
 
     feedbackDiv.classList.remove("hidden");
 document.getElementById("btnSiguiente").innerText = (turnoActual === 5) ? "Finalizar" : "Continuar";
+document.getElementById("btnSiguiente").onclick = (turnoActual === 5) ? async function() {
+  if (ayudaEscucharModelo > 0) {
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({
+        action: "actualizarAyudaModelo",
+        email: emailUsuario,
+        sesion_id: sesionId,
+        turno_numero: turnoActual,
+        ayuda_escuchar_modelo: ayudaEscucharModelo
+      })
+    });
+  }
+  siguienteTurno();
+} : function() { siguienteTurno(); };
     document.getElementById("btnGrabar").disabled = true;
 const btnModelo = document.getElementById("btnEscucharModelo");
    if (evaluacion.frase_modelo && evaluacion.frase_modelo.length > 0) {
@@ -456,6 +472,19 @@ const btnModelo = document.getElementById("btnEscucharModelo");
 }
 
 async function siguienteTurno() {
+if (ayudaEscucharModelo > 0) {
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({
+        action: "actualizarAyudaModelo",
+        email: emailUsuario,
+        sesion_id: sesionId,
+        turno_numero: turnoActual,
+        ayuda_escuchar_modelo: ayudaEscucharModelo
+      })
+    });
+  }
 tiempoAgotado = false;
 ayudaVerOracion = false;
 ayudaEscucharModelo = 0;
@@ -583,6 +612,8 @@ async function reproducirAudioTTS(texto) {
 
 async function escucharFraseModelo() {
   ayudaEscucharModelo++;
+  document.getElementById("btnEscucharModelo").disabled = true;
+  document.getElementById("btnEscucharModelo").innerText = "⏳ Preparando...";
   ayudaVerOracion = false;
   document.getElementById("textoIA").style.display = "none";
   document.getElementById("btnVerOracion").style.display = "inline";
@@ -593,6 +624,8 @@ async function escucharFraseModelo() {
   for (const frase of frases) {
     await reproducirAudioTTS(frase);
   }
+  document.getElementById("btnEscucharModelo").disabled = false;
+  document.getElementById("btnEscucharModelo").innerText = "🔊 OPCIONAL: Bragi te lee la/s frase/s modelo";
 }
 // ============================================================
 // UTILIDADES
