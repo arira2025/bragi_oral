@@ -55,7 +55,7 @@
       <button onclick="elegirContexto('Aeropuerto')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">✈ Aeropuerto</button>
  <button onclick="elegirContexto('Entrevista laboral')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">💼 Entrevista laboral</button>
       <button onclick="elegirContexto('Pedir información por un servicio')" class="contexto-btn bg-[#f0f4e8] hover:bg-[#4a7c3f] hover:text-white text-[#125423] px-3 py-2 rounded-lg text-sm transition">📋 Pedir información por un servicio</button>
-      <button onclick="cambiarConfiguracion()" class="col-span-2 text-xs text-gray-400 hover:text-[#125423] underline mt-2">⚙️ Cambiar nivel o idioma</button>
+     
 </div>
   </div>
 
@@ -726,12 +726,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
-function cambiarConfiguracion() {
-  document.getElementById("nivelOral").value = nivelOral;
-  document.getElementById("idiomaOral").value = idiomaOral;
-  ocultar("pantallaContexto");
-  mostrar("pantallaIdentificacion");
-}
+
 
 function verOracionEscrita() {
   document.getElementById("textoIA").style.display = "block";
