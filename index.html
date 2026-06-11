@@ -205,6 +205,8 @@ let mediaRecorder = null;
 let audioChunks = [];
 let tiempoAgotado = false;
 let audioActivo = true;
+let ayudaConsultarPalabraAnterior = 0;
+
 
 // ============================================================
 // PANTALLA 1: Identificación
@@ -477,16 +479,17 @@ const btnModelo = document.getElementById("btnEscucharModelo");
 }
 
 async function siguienteTurno() {
-if (ayudaEscucharModelo > 0) {
+if (ayudaEscucharModelo > 0 || ayudaConsultarPalabra > 0) {
     await fetch(APPS_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({
-        action: "actualizarAyudaModelo",
+        action: "actualizarAyudasPostTurno",
         email: emailUsuario,
         sesion_id: sesionId,
         turno_numero: turnoActual,
-        ayuda_escuchar_modelo: ayudaEscucharModelo
+        ayuda_escuchar_modelo: ayudaEscucharModelo,
+        ayuda_consultar_palabra: ayudaConsultarPalabra
       })
     });
   }
