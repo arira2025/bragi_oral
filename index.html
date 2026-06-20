@@ -15,7 +15,7 @@
   <div id="pantallaIdentificacion" style="display:none;">
     <h2 class="text-2xl font-semibold text-[#125423] mb-2">🎙️ Ejercitación oral con Bragi</h2>
     <p class="text-gray-600 mb-6">Cambia o confirma tu nivel / idioma de explicaciones.</p>
-    <input id="emailUsuario" type="email" style="display:none;">
+    <input id="codigoUsuario" type="text" style="display:none;">
     <label class="font-medium text-[#125423]">Nivel</label>
     <select id="nivelOral"
       class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 mb-4 focus:outline-none focus:ring-2 focus:ring-[#4a7c3f] transition">
@@ -188,7 +188,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzaOMtIjwlOUujJ
 // ============================================================
 // VARIABLES GLOBALES
 // ============================================================
-let emailUsuario = "";
+let codigoUsuario = "";
 let nivelOral = "A2";
 let idiomaOral = "Español";
 let contextoActual = "";
@@ -213,13 +213,13 @@ let ayudaConsultarPalabraAnterior = 0;
 // PANTALLA 1: Identificación
 // ============================================================
 function confirmarIdentidad() {
-  const email = document.getElementById("emailUsuario").value.trim();
-  if (!email || !email.includes("@")) {
-    mostrarMensaje("Ingresá un email válido.");
+  const codigo = document.getElementById("codigoUsuario").value.trim();
+  if (!codigo) {
+    mostrarMensaje("Ingresá tu código.");
     return;
   }
-  emailUsuario = email;
-localStorage.setItem("bragi_email", emailUsuario);
+  codigoUsuario = codigo;
+localStorage.setItem("bragi_codigo", codigoUsuario);
 localStorage.setItem("bragi_nivel", document.getElementById("nivelOral").value);
 localStorage.setItem("bragi_idioma", document.getElementById("idiomaOral").value);
   nivelOral = document.getElementById("nivelOral").value;
@@ -236,7 +236,7 @@ localStorage.setItem("bragi_idioma", document.getElementById("idiomaOral").value
 // ============================================================
 async function cargarContextosSugeridos() {
   try {
-    const response = await fetch(APPS_SCRIPT_URL + "?action=obtenerContextos&email=" + encodeURIComponent(emailUsuario));
+    const response = await fetch(APPS_SCRIPT_URL + "?action=obtenerContextos&codigo=" + encodeURIComponent(codigoUsuario));
     const data = await response.json();
     const contenedor = document.getElementById("contextosSugeridos");
     contenedor.innerHTML = "";
@@ -272,7 +272,7 @@ async function elegirContexto(contexto) {
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({
         action: "iniciarDialogo",
-        email: emailUsuario,
+        codigo: codigoUsuario,
         contexto: contexto,
         nivel: nivelOral,
         idioma: idiomaOral
@@ -361,7 +361,7 @@ async function procesarAudio(audioBlob) {
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({
         action: "transcribirAudio",
-        email: emailUsuario,
+        codigo: codigoUsuario,
         audio_base64: base64,
         mime_type: audioBlob.type || "audio/webm",
         idioma: idiomaOral
@@ -398,7 +398,7 @@ async function evaluarTurno(transcripcion) {
   try {
     const payload = {
       action: "evaluarTurno",
-      email: emailUsuario,
+      codigo: codigoUsuario,
       sesion_id: sesionId,
       contexto: contextoActual,
       nivel: nivelOral,
@@ -450,7 +450,7 @@ async function evaluarTurno(transcripcion) {
           headers: { "Content-Type": "text/plain" },
           body: JSON.stringify({
             action: "actualizarAyudaModelo",
-            email: emailUsuario,
+            codigo: codigoUsuario,
             sesion_id: sesionId,
             turno_numero: turnoActual,
             ayuda_escuchar_modelo: ayudaEscucharModelo
@@ -486,7 +486,7 @@ if (ayudaEscucharModelo > 0 || ayudaConsultarPalabra > 0) {
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({
         action: "actualizarAyudasPostTurno",
-        email: emailUsuario,
+        codigo: codigoUsuario,
         sesion_id: sesionId,
         turno_numero: turnoActual,
         ayuda_escuchar_modelo: ayudaEscucharModelo,
@@ -531,7 +531,7 @@ async function generarFeedbackFinal() {
   try {
     const payload = {
       action: "feedbackFinalOral",
-      email: emailUsuario,
+      codigo: codigoUsuario,
       sesion_id: sesionId,
       contexto: contextoActual,
       nivel: nivelOral,
@@ -677,7 +677,7 @@ ayudaConsultarPalabra++;
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({
         action: "consultarPalabra",
-        email: emailUsuario,
+        codigo: codigoUsuario,
         palabra: palabra,
         nivel: nivelOral,
         idioma: idiomaOral
@@ -707,16 +707,16 @@ function cerrarSesionOralGH() {
 
 document.addEventListener("DOMContentLoaded", function() {
   const params = new URLSearchParams(window.location.search);
-  const emailParam = params.get("email");
-  const emailGuardado = emailParam || localStorage.getItem("bragi_email");
-  if (emailGuardado) {
-    emailUsuario = emailGuardado;
-    localStorage.setItem("bragi_email", emailGuardado);
+  const codigoParam = params.get("codigo");
+  const codigoGuardado = codigoParam || localStorage.getItem("bragi_codigo");
+  if (codigoGuardado) {
+    codigoUsuario = codigoGuardado;
+    localStorage.setItem("bragi_codigo", codigoGuardado);
     nivelOral = params.get("nivel") || localStorage.getItem("bragi_nivel") || "A2";
     const idiomaParam = params.get("idioma");
     idiomaOral = idiomaParam || localStorage.getItem("bragi_idioma") || "Español";
     if (idiomaParam) localStorage.setItem("bragi_idioma", idiomaParam);
-    document.getElementById("emailUsuario").value = emailUsuario;
+    document.getElementById("codigoUsuario").value = codigoUsuario;
     document.getElementById("nivelOral").value = nivelOral;
     document.getElementById("idiomaOral").value = idiomaOral;
     cargarContextosSugeridos();
