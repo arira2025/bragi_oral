@@ -191,6 +191,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzaOMtIjwlOUujJ
 let codigoUsuario = "";
 let nivelOral = "A2";
 let idiomaOral = "Español";
+let idiomaExplicacion = "Español";
 let contextoActual = "";
 let turnoActual = 1;
 let textoIAActual = "";
@@ -275,15 +276,17 @@ async function elegirContexto(contexto) {
         codigo: codigoUsuario,
         contexto: contexto,
         nivel: nivelOral,
-        idioma: idiomaOral
+        idioma: idiomaExplicacion,
+        idioma_practica: idiomaOral
       })
     });
     const data = await response.json();
     textoIAActual = data.texto_ia;
     if (data.sesion_id) sesionId = data.sesion_id;
    document.getElementById("contextoActual").innerText = contexto;
-   document.getElementById("textoIA").innerText = textoIAActual;
-   document.getElementById("turnoActual").innerText = turnoActual;
+  document.getElementById("turnoActual").innerText = turnoActual;
+   if (data.advertencia_nivel) mostrarMensaje(data.advertencia_nivel);
+    document.getElementById("turnoActual").innerText = turnoActual;
 
 ocultar("pantallaContexto");
 mostrar("pantallaDialogo");
@@ -364,7 +367,7 @@ async function procesarAudio(audioBlob) {
         codigo: codigoUsuario,
         audio_base64: base64,
         mime_type: audioBlob.type || "audio/webm",
-        idioma: idiomaOral
+        idioma: idiomaExplicacion
       })
     });
 
@@ -402,8 +405,9 @@ async function evaluarTurno(transcripcion) {
       sesion_id: sesionId,
       contexto: contextoActual,
       nivel: nivelOral,
-      idioma: idiomaOral,
-      turno_numero: turnoActual,
+     idioma: idiomaExplicacion,
+      idioma_practica: idiomaOral,
+     turno_numero: turnoActual,
       texto_ia_anterior: textoIAActual,
       transcripcion_usuario: transcripcion,
       historial: historialTurnos,
@@ -535,7 +539,7 @@ async function generarFeedbackFinal() {
       sesion_id: sesionId,
       contexto: contextoActual,
       nivel: nivelOral,
-      idioma: idiomaOral,
+      idioma: idiomaExplicacion,
       historial: historialTurnos
     };
 
@@ -680,7 +684,7 @@ ayudaConsultarPalabra++;
         codigo: codigoUsuario,
         palabra: palabra,
         nivel: nivelOral,
-        idioma: idiomaOral
+        idioma: idiomaExplicacion
       })
     });
     const data = await response.json();
@@ -715,6 +719,7 @@ document.addEventListener("DOMContentLoaded", function() {
     nivelOral = params.get("nivel") || localStorage.getItem("bragi_nivel") || "A2";
     const idiomaParam = params.get("idioma");
     idiomaOral = idiomaParam || localStorage.getItem("bragi_idioma") || "Español";
+    idiomaExplicacion = params.get("idiomaExp") || "Español";
     if (idiomaParam) localStorage.setItem("bragi_idioma", idiomaParam);
     document.getElementById("codigoUsuario").value = codigoUsuario;
     document.getElementById("nivelOral").value = nivelOral;
