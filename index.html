@@ -559,8 +559,17 @@ async function generarFeedbackFinal() {
     });
 
     const resultado = await response.json();
+if (resultado.error) {
+  document.getElementById("contenidoFeedbackFinal").innerHTML =
+    "<p class='text-red-600'><strong>Error:</strong> " + resultado.error + "</p>";
+  mostrar("pantallaFeedbackFinal");
+  return;
+}
     const div = document.getElementById("contenidoFeedbackFinal");
     div.innerHTML = "";
+if (!resultado.resumen_general && !resultado.puntos_positivos && !resultado.sugerencia_siguiente) {
+  div.innerHTML = "<p>No se generó resumen.</p>";
+}
 
     if (resultado.resumen_general) div.innerHTML += "<p class='mb-3'><strong>Resumen:</strong> " + resultado.resumen_general + "</p>";
     if (resultado.puntos_positivos) div.innerHTML += "<p class='mb-3 text-green-700'>✓ " + resultado.puntos_positivos + "</p>";
