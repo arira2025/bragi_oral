@@ -498,7 +498,7 @@ const btnModelo = document.getElementById("btnEscucharModelo");
 }
 
     if (data.hay_mas_turnos) textoIAActual = evaluacion.continuacion_dialogo || "";
-guardarProgresoOral();
+
    
   } catch(e) {
     mostrarMensaje("Error al evaluar: " + e.message);
@@ -542,6 +542,7 @@ document.getElementById("btnVerOracion").style.display = "inline";
 }
 
 iniciarTimer();
+guardarProgresoOral();
   } else {
     await generarFeedbackFinal();
   }
@@ -759,7 +760,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("idiomaOral").value = idiomaOral;
 const progreso = JSON.parse(localStorage.getItem("bragi_oral_progreso") || "null");
 
-if (progreso && progreso.codigoUsuario === codigoUsuario && progreso.turnoActual < 5) {
+if (progreso && progreso.codigoUsuario === codigoUsuario && progreso.turnoActual <= 5) {
   nivelOral = progreso.nivelOral;
   idiomaOral = progreso.idiomaOral;
   idiomaExplicacion = progreso.idiomaExplicacion;
