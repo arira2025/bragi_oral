@@ -213,6 +213,17 @@ let tiempoAgotado = false;
 let audioActivo = true;
 let ayudaConsultarPalabraAnterior = 0;
 
+function guardarProgresoOral() {
+  localStorage.setItem("bragi_oral_progreso", JSON.stringify({
+    codigoUsuario, nivelOral, idiomaOral, idiomaExplicacion,
+    contextoActual, turnoActual, textoIAActual, sesionId, historialTurnos
+  }));
+}
+
+function borrarProgresoOral() {
+  localStorage.removeItem("bragi_oral_progreso");
+}
+
 
 // ============================================================
 // PANTALLA 1: Identificación
@@ -302,6 +313,7 @@ mostrar("pantallaDialogo");
 document.getElementById("feedbackTurno").classList.add("hidden");
 
 await reproducirAudioTTS(textoIAActual);
+guardarProgresoOral();
 
 const tiempos = { A2: 30, B1: 20, B2: 15 };
 tiempoLimite = tiempos[nivelOral] || 30;
@@ -486,6 +498,7 @@ const btnModelo = document.getElementById("btnEscucharModelo");
 }
 
     if (data.hay_mas_turnos) textoIAActual = evaluacion.continuacion_dialogo || "";
+guardarProgresoOral();
    
   } catch(e) {
     mostrarMensaje("Error al evaluar: " + e.message);
@@ -539,6 +552,7 @@ iniciarTimer();
 // ============================================================
 async function generarFeedbackFinal() {
   audioActivo = false;
+borrarProgresoOral();
   mostrarMensaje("Generando resumen...");
   ocultar("pantallaDialogo");
 
@@ -743,6 +757,29 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("codigoUsuario").value = codigoUsuario;
     document.getElementById("nivelOral").value = nivelOral;
     document.getElementById("idiomaOral").value = idiomaOral;
+const progreso = JSON.parse(localStorage.getItem("bragi_oral_progreso") || "null");
+
+if (progreso && progreso.codigoUsuario === codigoUsuario && progreso.turnoActual < 5) {
+  nivelOral = progreso.nivelOral;
+  idiomaOral = progreso.idiomaOral;
+  idiomaExplicacion = progreso.idiomaExplicacion;
+  contextoActual = progreso.contextoActual;
+  turnoActual = progreso.turnoActual;
+  textoIAActual = progreso.textoIAActual;
+  sesionId = progreso.sesionId;
+  historialTurnos = progreso.historialTurnos || [];
+
+  document.getElementById("turnoActual").innerText = turnoActual;
+  document.getElementById("contextoActual").innerText = contextoActual;
+  document.getElementById("textoIA").innerText = textoIAActual;
+
+  ocultar("pantallaIdentificacion");
+  ocultar("pantallaContexto");
+  mostrar("pantallaDialogo");
+  restaurarBtnGrabar();
+  iniciarTimer();
+  return;
+}
     cargarContextosSugeridos();
     ocultar("pantallaIdentificacion");
     mostrar("pantallaContexto");
