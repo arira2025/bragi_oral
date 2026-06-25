@@ -761,7 +761,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("idiomaOral").value = idiomaOral;
 const progreso = JSON.parse(localStorage.getItem("bragi_oral_progreso") || "null");
 
-if (progreso && progreso.codigoUsuario === codigoUsuario && progreso.turnoActual <= 5) {
+if (codigoParam && progreso && progreso.codigoUsuario === codigoUsuario && progreso.turnoActual <= 5) {
   nivelOral = progreso.nivelOral;
   idiomaOral = progreso.idiomaOral;
   idiomaExplicacion = progreso.idiomaExplicacion;
