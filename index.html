@@ -313,6 +313,7 @@ mostrar("pantallaDialogo");
 document.getElementById("feedbackTurno").classList.add("hidden");
 
 await reproducirAudioTTS(textoIAActual);
+borrarProgresoOral();
 guardarProgresoOral();
 
 const tiempos = { A2: 30, B1: 20, B2: 15 };
@@ -779,6 +780,7 @@ if (progreso && progreso.codigoUsuario === codigoUsuario && progreso.turnoActual
   mostrar("pantallaDialogo");
   restaurarBtnGrabar();
   iniciarTimer();
+  reproducirAudioTTS(textoIAActual);
   return;
 }
     cargarContextosSugeridos();
