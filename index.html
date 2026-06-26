@@ -766,6 +766,8 @@ if (retomarSesion && retomarContexto && retomarTurno > 0) {
   sesionId = retomarSesion;
   turnoActual = retomarTurno;
   contextoActual = retomarContexto;
+idiomaOral = idiomaParam || idiomaOral;
+nivelOral = params.get("nivel") || nivelOral;
   document.getElementById("turnoActual").innerText = turnoActual;
   document.getElementById("contextoActual").innerText = contextoActual;
   borrarProgresoOral();
