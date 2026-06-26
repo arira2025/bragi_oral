@@ -759,6 +759,15 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("codigoUsuario").value = codigoUsuario;
     document.getElementById("nivelOral").value = nivelOral;
     document.getElementById("idiomaOral").value = idiomaOral;
+const codigo = usuarioActual ? usuarioActual.usuario_id : "";
+window.open(
+  "https://arira2025.github.io/bragi_oral/?codigo=" + encodeURIComponent(codigo) +
+  "&idioma=" + encodeURIComponent(sesion.idioma_aprendizaje || "Alemán") +
+  "&retomar_sesion=" + encodeURIComponent(sesion.sesion_id) +
+  "&retomar_turno=" + encodeURIComponent(sesion.ejercicio_actual) +
+  "&retomar_contexto=" + encodeURIComponent(sesion.tema),
+  "_blank"
+);
 const progreso = JSON.parse(localStorage.getItem("bragi_oral_progreso") || "null");
 
 if (progreso && progreso.codigoUsuario !== codigoUsuario) {
