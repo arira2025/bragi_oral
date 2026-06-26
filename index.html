@@ -759,15 +759,26 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("codigoUsuario").value = codigoUsuario;
     document.getElementById("nivelOral").value = nivelOral;
     document.getElementById("idiomaOral").value = idiomaOral;
-const codigo = usuarioActual ? usuarioActual.usuario_id : "";
-window.open(
-  "https://arira2025.github.io/bragi_oral/?codigo=" + encodeURIComponent(codigo) +
-  "&idioma=" + encodeURIComponent(sesion.idioma_aprendizaje || "Alemán") +
-  "&retomar_sesion=" + encodeURIComponent(sesion.sesion_id) +
-  "&retomar_turno=" + encodeURIComponent(sesion.ejercicio_actual) +
-  "&retomar_contexto=" + encodeURIComponent(sesion.tema),
-  "_blank"
-);
+const retomarSesion = params.get("retomar_sesion");
+const retomarTurno = Number(params.get("retomar_turno")) || 0;
+const retomarContexto = params.get("retomar_contexto");
+if (retomarSesion && retomarContexto && retomarTurno > 0) {
+  sesionId = retomarSesion;
+  turnoActual = retomarTurno;
+  contextoActual = retomarContexto;
+  document.getElementById("turnoActual").innerText = turnoActual;
+  document.getElementById("contextoActual").innerText = contextoActual;
+  borrarProgresoOral();
+  ocultar("pantallaIdentificacion");
+  ocultar("pantallaContexto");
+  mostrar("pantallaDialogo");
+  restaurarBtnGrabar();
+  iniciarTimer();
+  fetch(APPS_SCRIPT_URL + "?action=obtenerTextoTurno&sesion_id=" + encodeURIComponent(retomarSesion) + "&turno=" + encodeURIComponent(retomarTurno))
+    .then(r => r.json())
+    .then(d => { if (d.texto_ia) { textoIAActual = d.texto_ia; document.getElementById("textoIA").innerText = textoIAActual; reproducirAudioTTS(textoIAActual); }});
+  return;
+}
 const progreso = JSON.parse(localStorage.getItem("bragi_oral_progreso") || "null");
 
 if (progreso && progreso.codigoUsuario !== codigoUsuario) {
