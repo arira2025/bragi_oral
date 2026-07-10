@@ -597,6 +597,15 @@ if (!resultado.resumen_general && !resultado.puntos_positivos && !resultado.suge
       });
       div.innerHTML += "</ul>";
     }
+    if (resultado.historial_turnos && resultado.historial_turnos.length > 0) {
+      div.innerHTML += "<p class='font-medium mb-2 mt-4'>Diálogo completo:</p><div class='space-y-2 mb-3'>";
+      resultado.historial_turnos.forEach(function(t) {
+        div.innerHTML += "<div class='p-2 bg-white rounded-lg text-sm'>"
+          + "<p><strong>texto_ia:</strong> " + t.texto_ia + "</p>"
+          + "<p><strong>transcripcion_usuario:</strong> " + t.transcripcion_usuario + "</p></div>";
+      });
+      div.innerHTML += "</div>";
+    }
     if (resultado.sugerencia_siguiente) div.innerHTML += "<p class='text-gray-500 text-sm mt-3'>Próxima sesión sugerida: " + resultado.sugerencia_siguiente + "</p>";
 
     mostrar("pantallaFeedbackFinal");
