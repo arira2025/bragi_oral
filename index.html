@@ -69,9 +69,9 @@
       <span class="text-sm text-gray-500">Turno <span id="turnoActual">1</span> de 5</span>
     </div>
     <p class="text-xs text-gray-400 mb-4">Contexto: <span id="contextoActual"></span></p>
-    <div id="instruccionOral" class="bg-[#f0f7f0] border border-[#4a7c3f] rounded-lg px-4 py-3 mb-4 text-sm text-[#125423]">
+        <div id="instruccionOral" class="bg-[#f0f7f0] border border-[#4a7c3f] rounded-lg px-4 py-3 mb-4 text-sm text-[#125423]">
       🎙️ <strong>¿Cómo funciona?</strong> Bragi te va a hablar en el idioma que estás practicando. Escuchá, después presioná el botón rojo para grabar tu respuesta y soltalo cuando termines. Tenés 30 segundos por turno. Podés usar las ayudas cuando las necesites.
-      <button onclick="document.getElementById('instruccionOral').style.display='none'" class="ml-2 text-xs text-gray-400 hover:text-gray-600">✕ cerrar</button>
+      <button onclick="comenzarTurnoOral()" class="block mt-2 bg-[#125423] hover:bg-[#0a3d1a] text-white text-sm font-medium px-4 py-2 rounded-lg transition">Entendido, comenzar</button>
     </div>
 
      <!-- Burbuja IA -->
@@ -86,6 +86,7 @@
 </div>
 </div>
 
+        <div id="zonaRespuestaOral" style="display:none;">
     <!-- Timer -->
     <div class="flex items-center gap-2 mb-3">
       <span class="text-sm text-gray-500">Tiempo:</span>
@@ -111,6 +112,7 @@
         class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition shadow font-medium">
         🔴 Grabando... tocá para detener
       </button>
+    </div>
     </div>
 <!-- Consulta de vocabulario — oral -->
     <div class="mb-3">
@@ -275,6 +277,14 @@ async function cargarContextosSugeridos() {
     document.getElementById("contextosSugeridos").innerHTML = "<p class='text-xs text-gray-400'>Sin sugerencias aún.</p>";
   }
 }
+function comenzarTurnoOral() {
+  document.getElementById("instruccionOral").style.display = "none";
+  document.getElementById("zonaRespuestaOral").style.display = "block";
+  reproducirAudioTTS(textoIAActual);
+  const tiempos = { A2: 30, B1: 20, B2: 15 };
+  tiempoLimite = tiempos[nivelOral] || 30;
+  iniciarTimer();
+}
 
 async function elegirContexto(contexto) {
   contextoActual = contexto;
@@ -315,14 +325,10 @@ document.getElementById("textoIA").innerText = textoIAActual;
 ocultar("pantallaContexto");
 mostrar("pantallaDialogo");
 document.getElementById("feedbackTurno").classList.add("hidden");
-
-await reproducirAudioTTS(textoIAActual);
+document.getElementById("zonaRespuestaOral").style.display = "none";
+document.getElementById("instruccionOral").style.display = "block";
 borrarProgresoOral();
 guardarProgresoOral();
-
-const tiempos = { A2: 30, B1: 20, B2: 15 };
-tiempoLimite = tiempos[nivelOral] || 30;
-iniciarTimer();;
 
   } catch(e) {
     mostrarMensaje("Error al iniciar el diálogo. Intentá de nuevo.");
