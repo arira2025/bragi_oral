@@ -62,17 +62,20 @@
   </div>
 
   <!-- PANTALLA 3: Diálogo -->
-  <div id="pantallaDialogo" style="display:none;">
+    <div id="pantallaDialogo" style="display:none;">
     <button onclick="volverAlMenuOral()" class="text-[#4a7c3f] hover:underline mb-2 inline-block text-sm">← Volver al menú</button>
+
+    <div id="instruccionOral" class="bg-[#f0f7f0] border border-[#4a7c3f] rounded-lg px-4 py-3 mb-4 text-sm text-[#125423]">
+      🎙️ <strong>¿Cómo funciona?</strong> Bragi te va a hablar en el idioma que estás practicando. Escuchá, después presioná el botón rojo para grabar tu respuesta y soltalo cuando termines. Tenés 30 segundos por turno. Podés usar las ayudas cuando las necesites.
+      <button onclick="comenzarTurnoOral()" class="block mt-2 bg-[#125423] hover:bg-[#0a3d1a] text-white text-sm font-medium px-4 py-2 rounded-lg transition">Entendido, comenzar</button>
+    </div>
+
+    <div id="contenidoTurnoOral" style="display:none;">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold text-[#125423]">Conversación oral</h2>
       <span class="text-sm text-gray-500">Turno <span id="turnoActual">1</span> de 5</span>
     </div>
     <p class="text-xs text-gray-400 mb-4">Contexto: <span id="contextoActual"></span></p>
-        <div id="instruccionOral" class="bg-[#f0f7f0] border border-[#4a7c3f] rounded-lg px-4 py-3 mb-4 text-sm text-[#125423]">
-      🎙️ <strong>¿Cómo funciona?</strong> Bragi te va a hablar en el idioma que estás practicando. Escuchá, después presioná el botón rojo para grabar tu respuesta y soltalo cuando termines. Tenés 30 segundos por turno. Podés usar las ayudas cuando las necesites.
-      <button onclick="comenzarTurnoOral()" class="block mt-2 bg-[#125423] hover:bg-[#0a3d1a] text-white text-sm font-medium px-4 py-2 rounded-lg transition">Entendido, comenzar</button>
-    </div>
 
      <!-- Burbuja IA -->
     <div class="bg-[#f0f4e8] rounded-xl p-4 mb-4">
@@ -86,7 +89,6 @@
 </div>
 </div>
 
-        <div id="zonaRespuestaOral" style="display:none;">
     <!-- Timer -->
     <div class="flex items-center gap-2 mb-3">
       <span class="text-sm text-gray-500">Tiempo:</span>
@@ -112,7 +114,6 @@
         class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition shadow font-medium">
         🔴 Grabando... tocá para detener
       </button>
-    </div>
     </div>
 <!-- Consulta de vocabulario — oral -->
     <div class="mb-3">
@@ -140,6 +141,7 @@
   	class="w-full bg-[#125423] hover:bg-[#0a3d1a] text-white px-4 py-2 rounded-lg transition shadow">
   	Continuar
       </button>
+    </div>
     </div>
   </div>
 
@@ -279,7 +281,7 @@ async function cargarContextosSugeridos() {
 }
 function comenzarTurnoOral() {
   document.getElementById("instruccionOral").style.display = "none";
-  document.getElementById("zonaRespuestaOral").style.display = "block";
+  document.getElementById("contenidoTurnoOral").style.display = "block";
   reproducirAudioTTS(textoIAActual);
   const tiempos = { A2: 30, B1: 20, B2: 15 };
   tiempoLimite = tiempos[nivelOral] || 30;
@@ -325,7 +327,7 @@ document.getElementById("textoIA").innerText = textoIAActual;
 ocultar("pantallaContexto");
 mostrar("pantallaDialogo");
 document.getElementById("feedbackTurno").classList.add("hidden");
-document.getElementById("zonaRespuestaOral").style.display = "none";
+document.getElementById("contenidoTurnoOral").style.display = "none";
 document.getElementById("instruccionOral").style.display = "block";
 borrarProgresoOral();
 guardarProgresoOral();
@@ -788,17 +790,16 @@ if (retomarSesion && retomarContexto && retomarTurno > 0) {
   contextoActual = retomarContexto;
 idiomaOral = idiomaParam || idiomaOral;
 nivelOral = params.get("nivel") || nivelOral;
-  document.getElementById("turnoActual").innerText = turnoActual;
+   document.getElementById("turnoActual").innerText = turnoActual;
   document.getElementById("contextoActual").innerText = contextoActual;
   borrarProgresoOral();
   ocultar("pantallaIdentificacion");
   ocultar("pantallaContexto");
   mostrar("pantallaDialogo");
   restaurarBtnGrabar();
-  iniciarTimer();
   fetch(APPS_SCRIPT_URL + "?action=obtenerTextoTurno&sesion_id=" + encodeURIComponent(retomarSesion) + "&turno=" + encodeURIComponent(retomarTurno))
     .then(r => r.json())
-    .then(d => { if (d.texto_ia) { textoIAActual = d.texto_ia; document.getElementById("textoIA").innerText = textoIAActual; reproducirAudioTTS(textoIAActual); }});
+    .then(d => { if (d.texto_ia) { textoIAActual = d.texto_ia; document.getElementById("textoIA").innerText = textoIAActual; }});
   return;
 }
 const progreso = JSON.parse(localStorage.getItem("bragi_oral_progreso") || "null");
@@ -816,7 +817,7 @@ if (progreso && progreso.codigoUsuario === codigoUsuario && progreso.turnoActual
   sesionId = progreso.sesionId;
   historialTurnos = progreso.historialTurnos || [];
 
-  document.getElementById("turnoActual").innerText = turnoActual;
+    document.getElementById("turnoActual").innerText = turnoActual;
   document.getElementById("contextoActual").innerText = contextoActual;
   document.getElementById("textoIA").innerText = textoIAActual;
 
@@ -824,8 +825,6 @@ if (progreso && progreso.codigoUsuario === codigoUsuario && progreso.turnoActual
   ocultar("pantallaContexto");
   mostrar("pantallaDialogo");
   restaurarBtnGrabar();
-  iniciarTimer();
-  reproducirAudioTTS(textoIAActual);
   return;
 }
     cargarContextosSugeridos();
