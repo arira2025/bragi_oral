@@ -63,12 +63,12 @@
 
   <!-- PANTALLA 3: Diálogo -->
  <div id="pantallaDialogo" style="display:none;">
+     <div id="pantallaDialogo" style="display:none;">
     <button onclick="volverAlMenuOral()" class="text-[#4a7c3f] hover:underline mb-2 inline-block text-sm">← Volver al menú</button>
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-[#125423]">Conversación oral</h2>
-      <span class="text-sm text-gray-500">Turno <span id="turnoActual">1</span> de 5</span>
+    <div id="instruccionOral" class="bg-[#f0f7f0] border border-[#4a7c3f] rounded-lg px-4 py-3 mb-4 text-sm text-[#125423]">
+      🎙️ <strong>¿Cómo funciona?</strong> Bragi te va a hablar en el idioma que estás practicando. Escuchá, después presioná el botón rojo para grabar tu respuesta y soltalo cuando termines. Tenés 30 segundos por turno. Podés usar las ayudas cuando las necesites.
+      <button onclick="document.getElementById('instruccionOral').style.display='none'" class="ml-2 text-xs text-gray-400 hover:text-gray-600">✕ cerrar</button>
     </div>
-    <p class="text-xs text-gray-400 mb-4">Contexto: <span id="contextoActual"></span></p>
 
     <!-- Burbuja IA -->
     <div class="bg-[#f0f4e8] rounded-xl p-4 mb-4">
